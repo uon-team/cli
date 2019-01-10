@@ -1,0 +1,11 @@
+*.DS_Store
+*.project
+*.settings
+/docs
+/node_modules
+/typings
+/src
+/.vscode
+*.log
+index.ts
+bin.ts

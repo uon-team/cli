@@ -1,0 +1,34 @@
+{
+  "name": "@uon/cli",
+  "version": "0.1.0",
+  "description": "Command line tools for UON framework",
+  "main": "dist/index.js",
+  "preferGlobal": true,
+  "bin": {
+    "uon": "dist/bin.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && cp -r templates dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uon-team/cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uon-team/cli/issues"
+  },
+  "homepage": "https://github.com/uon-team/cli#readme",
+  "dependencies": {
+    "@types/node": "^10.11.0",
+    "@types/webpack": "^4.4.13",
+    "@uon/core": "^0.4.0",
+    "commander": "^2.18.0",
+    "ts-loader": "^5.2.1",
+    "typescript": "^3.1.3",
+    "webpack": "^4.20.2"
+  }
+}
