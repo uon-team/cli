@@ -8,15 +8,19 @@ npm i -g @uon/cli
 
 ## Usage
 
-### Create a new project
+### Create a new workspace and/or project
 ```shell
-uon setup <template> my-project
+uon new <template> my-project
 ```
 
+If the current working directory contains a uon.json file, a project will be added to the workspace, otherwise the command creates a new folder for the workspace.
 
-### Build a project
+
+### Build a project in a workspace
 ```shell
 cd my-project
-uon build [--prod] [--watch]
+uon build <project-name> [--prod] [--watch]
 ```
+
+You can build all projects in the workspace by passing '*' as the project name 
 
