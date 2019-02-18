@@ -9,3 +9,4 @@
 *.log
 index.ts
 bin.ts
+tsconfig.json
