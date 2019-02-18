@@ -31,7 +31,7 @@ program
 
 // generate a component of <type>
 program
-    .command('generate <type> <name> [options]')
+    .command('generate <type> <name>')
     .description(`Generate files for a UON project.`)
     .action(async (type: string, name: string, options: any) => {
 
@@ -129,11 +129,7 @@ program
         build_options.projectPath = project_path;
         build_options.entry = _path.resolve(project_path, project.entry);
         build_options.outputPath = output_path;
-       /* build_options.assets = (build_options.assets || []).map((a) => {
-            return _path.resolve(project_path, a);
-        });*/
         build_options.replacements = (build_options.replacements || []).map((r) => {
-
             return {
                 replace: _path.resolve(project_path, r.replace),
                 with: _path.resolve(project_path, r.with),

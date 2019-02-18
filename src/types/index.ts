@@ -9,7 +9,7 @@ export const GENERATORS: any = {
 
     "server":  ServerGenerator,
     "webapp": WebAppGenerator,
-    "lib": null,
+    "library": null,
 
     "service": null,
     "outlet": null,
@@ -22,5 +22,5 @@ export const COMPILERS: any = {
 
     "server":  ServerCompiler,
     "webapp": WebAppCompiler,
-    "lib": null,
+    "library": null,
 }

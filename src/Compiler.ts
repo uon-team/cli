@@ -8,11 +8,21 @@ import * as _path from 'path';
 import * as fs from 'fs';
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-
+const TerserPlugin = require('terser-webpack-plugin')
 
 export const TS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
     'node_modules/ts-loader/index.js'
+);
+
+export const SASS_LOADER_PATH = _path.join(
+    _path.resolve(__dirname, '../..'),
+    'node_modules/sass-loader/lib/loader.js'
+);
+
+export const CSS_LOADER_PATH = _path.join(
+    _path.resolve(__dirname, '../..'),
+    'node_modules/css-loader/dist/index.js'
 );
 
 export interface BuildReplacement {
@@ -65,6 +75,8 @@ export async function GetCompiler(type: string, ws: Workspace): Promise<ICompile
 
 export function GetWebpackConfig(config: BuildConfigBase) {
 
+    const is_prod = config.optimizations && config.optimizations.prod;
+
 
     // format replacements as aliases
     const aliases: any = {};
@@ -86,8 +98,28 @@ export function GetWebpackConfig(config: BuildConfigBase) {
         return res;
     });
 
+    // define minifiers
+    const minimizers: any[] = [];
+    const plugins: any[] = [new CopyWebpackPlugin(copies, {})];
+
+
+    if (is_prod) {
+
+        let terser_options = {
+            parallel: true,
+            terserOptions: {
+                mangle: true,
+                keep_fnames: false,
+                
+            }
+        }
+
+        minimizers.push(new TerserPlugin(terser_options));
+    }
+
+
     const webpack_config: webpack.Configuration = {
-        mode: config.optimizations && config.optimizations.prod ? "production" : "development",
+        mode: is_prod ? "production" : "development",
         target: config.target,
         entry: config.entry,
         output: {
@@ -100,15 +132,10 @@ export function GetWebpackConfig(config: BuildConfigBase) {
             alias: aliases
 
         },
-        /* optimization: {
-             mergeDuplicateChunks: true,
-             providedExports: true,
-             usedExports: true,
-             
-         },*/
-        plugins: [
-            new CopyWebpackPlugin(copies, {})
-        ],
+        optimization: {
+            minimizer: minimizers
+        },
+        plugins: plugins,
         module: {
             rules: [
                 // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
