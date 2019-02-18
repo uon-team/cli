@@ -11,16 +11,24 @@ import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, Crea
 
 export interface WebAppConfig {
 
-
+    useUonCore: boolean;
+    useUonRouter: boolean;
 }
 
 const QUESTIONS = [
     {
         type: 'confirm',
-        name: 'useStaticAssets',
-        message: 'Generate static asset router outlet?',
+        name: 'useUonCore',
+        message: 'Use @uon/core application structure?',
         default: false
     },
+    {
+        type: 'confirm',
+        name: 'useUonRouter',
+        message: 'Use @uon/router for single page app?',
+        default: false
+    },
+
 ];
 
 
@@ -126,8 +134,7 @@ export class WebAppGenerator implements IGenerator {
 
         console.log(`Running "npm install" ...`);
         cmd_result = await ExecCommand('npm install');
-        //console.log(cmd_result);
-
+    
         // create .gitignore
         await CreateGitIgnore(project_path);
 
@@ -152,7 +159,6 @@ export class WebAppGenerator implements IGenerator {
 
         // create assets folder
         await WriteFile(_path.join(assets_path, '.gitkeep'), Buffer.from(''));
-
 
         // create main style file
         await WriteFile(_path.join(src_path, 'styles.scss'), Buffer.from(''));

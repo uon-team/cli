@@ -4,12 +4,14 @@ import { ServerGenerator } from './server/ServerGenerator';
 import { ServerCompiler } from './server/ServerCompiler';
 import { WebAppGenerator } from './webapp/WebAppGenerator';
 import { WebAppCompiler } from './webapp/WebAppCompiler';
+import { LibraryGenerator } from './library/LibraryGenerator';
+import { LibraryCompiler } from './library/LibraryCompiler';
 
 export const GENERATORS: any = {
 
     "server":  ServerGenerator,
     "webapp": WebAppGenerator,
-    "library": null,
+    "library": LibraryGenerator,
 
     "service": null,
     "outlet": null,
@@ -22,5 +24,5 @@ export const COMPILERS: any = {
 
     "server":  ServerCompiler,
     "webapp": WebAppCompiler,
-    "library": null,
+    "library": LibraryCompiler,
 }
