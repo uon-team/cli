@@ -1,9 +1,0 @@
-{
-    "name": "model",
-    "target": "web",
-    "defaultMainFilename": "index.ts",
-    "dependencies": {
-        "@uon/core": "^0.4.0",
-        "@uon/model": "^0.1.2"
-    }
-}
