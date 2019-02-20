@@ -2,10 +2,12 @@
 import { Type } from '@uon/core';
 import { Workspace } from './Workspace';
 import { GENERATORS } from './types'
+import { Project } from './Project';
 
 export interface GeneratorContext {
 
     workspace: Workspace;
+    project: Project;
 
     arguments: {
         name: string;

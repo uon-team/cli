@@ -6,6 +6,7 @@ import { WebAppGenerator } from './webapp/WebAppGenerator';
 import { WebAppCompiler } from './webapp/WebAppCompiler';
 import { LibraryGenerator } from './library/LibraryGenerator';
 import { LibraryCompiler } from './library/LibraryCompiler';
+import { ModuleGenerator } from './scaffolding/ModuleGenerator';
 
 export const GENERATORS: any = {
 
@@ -16,7 +17,7 @@ export const GENERATORS: any = {
     "service": null,
     "outlet": null,
     "guard": null,
-    "module": null,
+    "module": ModuleGenerator,
     "model": null,
 }
 

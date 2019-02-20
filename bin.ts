@@ -43,8 +43,11 @@ program
             return;
         }
 
+        let project = ws.getProjectByPath(process.cwd());
+
         let context: GeneratorContext = {
             workspace: ws,
+            project,
             arguments: {
                 name: name,
                 type: type
