@@ -26,6 +26,8 @@ export class ServerCompiler implements ICompiler<ServerBuildConfig> {
 
     async compile(config: ServerBuildConfig): Promise<void> {
 
+        console.log(`Building server project...`);
+
         const webpack_config = GetWebpackConfig(config);
 
         // add node specific options

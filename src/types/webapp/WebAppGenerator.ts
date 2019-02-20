@@ -5,6 +5,7 @@ import { IGenerator, GeneratorContext } from '../../Generator';
 import { prompt } from 'inquirer';
 import { Project } from '../../Project';
 import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../Utils';
+import { CreateModuleTs } from '../scaffolding/ModuleGenerator';
 
 
 
@@ -150,7 +151,8 @@ export class WebAppGenerator implements IGenerator {
         await CreateMainTs(src_path);
 
         // create main module
-        await CreateMainAppModule(app_path, context.configuration);
+        await CreateModuleTs(app_path, 'app');
+
 
         // create environment.ts & environment.prod.ts
         await CreateEnvFile(env_path, 'environment.ts');
@@ -212,27 +214,6 @@ async function CreateIndexHTML(srcPath: string, name: string) {
 
 }
 
-
-
-async function CreateMainAppModule(appPath: string, config: WebAppConfig) {
-
-    const main_module = `
-import { Module } from '@uon/core';
-
-@Module({
-    imports: [
-
-    ]
-})
-export class AppModule {}
-
-    `;
-
-    await WriteFile(_path.join(appPath, 'app.module.ts'), Buffer.from(main_module));
-
-
-
-}
 
 function CreateMainTs(srcPath: string) {
 

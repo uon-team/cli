@@ -149,8 +149,7 @@ export async function CreateTSConfig(path: string) {
         "node_modules",
         "typings/global",
         "typings/global.d.ts"
-    ],
-    "compileOnSave": true
+    ]
 }`;
 
     return WriteFile(_path.join(path, 'tsconfig.json'), Buffer.from(str));
@@ -169,3 +168,41 @@ export const ENVIRONMENT = {
     return WriteFile(_path.join(envPath, fileName), Buffer.from(content));
 
 }
+
+export function FindModuleContext(cwd: string, furthest: string): { path: string, module: string} {
+
+    let start = cwd;
+
+    if(cwd === furthest) {
+        return null;
+    }
+
+    // check for *.module.ts file in current folder
+    let files = fs.readdirSync(start);
+
+    for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+
+        if(f.match(/(.*)\.module\.ts$/)) {
+            return {
+                path: start,
+                module: f
+            };
+        }
+        
+    }
+
+    let parent_dir = _path.dirname(start);
+    
+    // go up one level
+    return FindModuleContext(parent_dir, furthest);
+
+
+
+
+
+
+
+}
+
+

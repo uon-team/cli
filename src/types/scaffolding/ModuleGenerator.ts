@@ -6,29 +6,20 @@ import { IGenerator, GeneratorContext } from '../../Generator';
 import { prompt } from 'inquirer';
 import { Project } from '../../Project';
 import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../Utils';
+import { StringUtils } from '@uon/core';
 
 
 export interface ModuleConfig {
-
+    targetPath: string;
 }
 
 
 
 export class ModuleGenerator implements IGenerator {
 
-
     async checkPrerequisites(context: GeneratorContext): Promise<boolean> {
 
-        // check if a project of the same name exists
-        let ws_projects = context.workspace.projects
-            .filter((p) => {
-                return p.name === context.arguments.name;
-            });
-
-        if (ws_projects.length > 0) {
-            throw new Error(`Project with name "${context.arguments.name}" already exist in workspace.`);
-        }
-
+        
 
         return true;
     }
@@ -39,43 +30,61 @@ export class ModuleGenerator implements IGenerator {
             throw new Error(`No project selected, make sure cwd is inside a project folder.`)
         }
 
+        // find the target path
+        let project_path = _path.resolve(context.workspace.rootPath, context.project.root);
+        let target_path = _path.join(project_path, 'src/app');
 
+        // library doesn't have an app folder
+        if(context.project.projectType === 'library') {
+            target_path = _path.join(project_path, 'src');
+        }
+
+        //
+        
+
+        const module_name = context.arguments.name.toLowerCase();
+        const module_dir = _path.join(target_path, module_name);
+        context.configuration.targetPath = module_dir;
+
+        if(fs.existsSync(module_dir)) {
+            throw new Error(`Cannot create module, a folder with name "${module_name}" already exists`);
+        }
 
     }
 
     async generate(context: GeneratorContext): Promise<void> {
 
-        console.log(`Generating Module`);
-
-
-        
-        // create project folders
-        //const project_path = _path.join(context.workspace.rootPath, project.root);
-        //const src_path = _path.join(project_path, 'src');
-
-        //EnsureDirectoryExistence(src_path);
-
-        const deps: any = {}
-        const dev_deps: any = {}
-
         let opts: ModuleConfig = context.configuration;
-       
 
+        // create module folder
+        const module_name = context.arguments.name.toLowerCase();
 
-     
+        console.log(`Generating module "${module_name}"...`);
 
+        await CreateModuleTs(opts.targetPath, module_name);
+
+        console.log(`Done!`);
     }
 
 
 }
 
 
-function CreateIndexTs(srcPath: string) {
+export function CreateModuleTs(modulePath: string, name: string) {
+
+    let ucc_name = StringUtils.camelCase(name);
+    ucc_name = ucc_name[0].toUpperCase() + ucc_name.substring(1);
 
     const str = `
+import { Module } from '@uon/core';
 
+@Module({
+    imports: [],
+    providers: []
+})
+export class ${ucc_name}Module {}
     `;
 
-    return WriteFile(_path.join(srcPath, 'index.ts'), Buffer.from(str));
+    return WriteFile(_path.join(modulePath, `${name}.module.ts`), Buffer.from(str));
 
 }

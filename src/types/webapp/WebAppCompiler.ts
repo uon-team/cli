@@ -32,6 +32,8 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
 
     async compile(config: WebAppBuildConfig): Promise<void> {
 
+        console.log(`Building webapp project...`);
+
         const is_prod = config.optimizations && config.optimizations.prod;
 
         // get default webpack config
@@ -63,7 +65,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
                 {
                     loader: SASS_LOADER_PATH,
                     options: {
-                       
+
                     }
                 }
             ],
@@ -98,7 +100,8 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
                 chunks: false,  // Makes the build much quieter
                 colors: true,    // Shows colors in the console
                 chunkOrigins: false,
-                modules: false
+                modules: false,
+                children: false
             }));
         });
     }
