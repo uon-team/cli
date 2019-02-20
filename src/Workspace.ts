@@ -3,7 +3,7 @@ import * as colors from 'colors/safe';
 import * as _path from 'path';
 import * as fs from 'fs';
 
-import { FileExists, WriteFile, ReadFile } from './Utils';
+import { FileExists, WriteFile, ReadFile, ExecCommand } from './Utils';
 import { Project } from './Project';
 
 
@@ -86,6 +86,12 @@ export class Workspace {
 
         // write workspace file
         await WriteFile(file_path, Buffer.from(JSON.stringify(workspace, null, 4)));
+
+
+        // call git init
+        process.chdir(folder_path);
+
+        await ExecCommand("git init")
 
 
         console.log(`Created workspace "${colors.bold(colors.blue(name))}"`);

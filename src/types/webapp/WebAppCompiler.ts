@@ -44,7 +44,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
         let scss_plugin = new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: is_prod ? '[name].[hash].css' : '[name].css',
+            filename: is_prod ? 'styles.[hash].css' : 'styles.css',
         });
         webpack_config.plugins.push(scss_plugin);
 

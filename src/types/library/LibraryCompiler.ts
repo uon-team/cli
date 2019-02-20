@@ -2,7 +2,7 @@ import { ICompiler, BuildConfigBase, GetWebpackConfig, SASS_LOADER_PATH, CSS_LOA
 
 import * as ts from 'typescript';
 import * as _path from 'path';
-import { ReadFile } from "../../Utils";
+import { ReadFile, WriteFile } from "../../Utils";
 
 
 
@@ -26,7 +26,10 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
     async compile(config: LibraryBuildConfig): Promise<void> {
 
         // typescript transpile only, no webpack packaging
+        console.log(`Building library project...`);
 
+
+        console.log(`\t Loading tsconfig.json...`);
         // load tsconfig
         let ts_config_buffer = await ReadFile(_path.join(config.projectPath, 'tsconfig.json'))
         let ts_config = JSON.parse(ts_config_buffer.toString());
@@ -37,6 +40,7 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
         // set the proper output dir
         real_config.options.outDir = config.outputPath;
 
+        console.log(`\t Transpiling typescript to ${ts_config.compilerOptions.target}...`);
         let program = ts.createProgram([config.entry], real_config.options);
         let emit_result = program.emit();
 
@@ -63,7 +67,20 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
             }
         });
 
+        // copy package.json to outputPath
+        let pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
+        let pkg = JSON.parse(pkg_buffer.toString());
 
+        console.log(`\t Copying package.json to dist folder ...`);
+        console.log(`\t Removing scripts from package.json`);
+
+        // remove scripts
+        delete pkg.scripts;
+
+        await WriteFile(_path.join(config.outputPath, 'package.json'),
+            Buffer.from(JSON.stringify(pkg, null, 2)));
+
+        console.log(`Done!`);
 
     }
 }

@@ -9,6 +9,8 @@ import * as fs from 'fs';
 
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 
 export const TS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
@@ -110,7 +112,7 @@ export function GetWebpackConfig(config: BuildConfigBase) {
             terserOptions: {
                 mangle: true,
                 keep_fnames: false,
-                
+
             }
         }
 
@@ -129,7 +131,13 @@ export function GetWebpackConfig(config: BuildConfigBase) {
         resolve: {
             // Add `.ts` and `.tsx` as a resolvable extension.
             extensions: [".ts", ".tsx", ".js"],
-            alias: aliases
+            alias: aliases,
+            plugins: [
+                new TsconfigPathsPlugin({
+                    configFile: _path.join(config.projectPath, "tsconfig.json")
+                }),
+            ],
+            modules: [_path.join(config.projectPath, "node_modules")]
 
         },
         optimization: {
