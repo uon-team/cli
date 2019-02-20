@@ -35,6 +35,25 @@ export class Workspace {
 
     }
 
+    getProjectByPath(cwd: string) {
+
+        if(!cwd.startsWith(this.rootPath)) {
+            return null;
+        }
+
+        for (let i = 0; i < this.projects.length; i++) {
+            let project = this.projects[i];
+            let project_path = _path.resolve(this.rootPath, project.root);
+
+            if(cwd.startsWith(project_path)) {
+                return project;
+            }
+        }
+
+        return null;
+
+    }
+
 
     /**
      * Save the workspace

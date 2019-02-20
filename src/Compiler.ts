@@ -100,7 +100,9 @@ export function GetWebpackConfig(config: BuildConfigBase) {
 
     // define minifiers
     const minimizers: any[] = [];
-    const plugins: any[] = [new CopyWebpackPlugin(copies, {})];
+    const plugins: any[] = [
+        new CopyWebpackPlugin(copies, {})
+    ];
 
 
     if (is_prod) {

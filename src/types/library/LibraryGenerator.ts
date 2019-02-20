@@ -70,8 +70,6 @@ export class LibraryGenerator implements IGenerator {
 
         context.configuration = answers;
 
-        console.log(answers);
-
     }
 
     async generate(context: GeneratorContext): Promise<void> {
