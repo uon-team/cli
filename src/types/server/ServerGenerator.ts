@@ -1,5 +1,7 @@
 
 import * as _path from 'path';
+import * as fs from 'fs';
+import * as colors from 'colors/safe';
 
 import { IGenerator, GeneratorContext } from '../../Generator';
 
@@ -28,17 +30,13 @@ export class ServerGenerator implements IGenerator {
 
     async checkPrerequisites(context: GeneratorContext): Promise<boolean> {
 
-        // check if a project of the same name exists
-        let ws_projects = context.workspace.projects
-            .filter((p) => {
-                return p.name === context.arguments.name;
-            });
+        // check if a folder of the same name exists
+        let project_path = _path.join(process.cwd(), context.arguments.name);
+        let exists = fs.existsSync(project_path);
 
-        if (ws_projects.length > 0) {
-            throw new Error(`Project with name "${context.arguments.name}" already exist in workspace.`);
+        if (exists) {
+            throw new Error(`Directory "./${context.arguments.name}" already exists.`);
         }
-
-
 
         return true;
     }
@@ -53,18 +51,18 @@ export class ServerGenerator implements IGenerator {
 
     async generate(context: GeneratorContext): Promise<void> {
 
-        console.log(`Generating server project...`);
-
+        
         let project_name = context.arguments.name;
+
+        console.log(`Generating server project "${colors.bold(project_name)}"...`);
 
         // create new project
         let project = new Project({
             name: project_name,
             projectType: 'server',
-            root: project_name,
             entry: 'src/main.ts',
             options: {
-                outputPath: `dist/${project_name}`,
+                outputPath: `dist`,
                 filename: `${project_name}-bundle.js`,
                 assets: [
                     "src/assets"
@@ -85,11 +83,10 @@ export class ServerGenerator implements IGenerator {
             }
         });
 
-        context.workspace.projects.push(project);
-
+        project.rootPath = _path.join(process.cwd(), context.arguments.name);
 
         // create project folders
-        const project_path = _path.join(context.workspace.rootPath, project.root);
+        const project_path = project.rootPath; //_path.join(context.workspace.rootPath, project.root);
         const src_path = _path.join(project_path, 'src');
         const app_path = _path.join(src_path, 'app');
         const assets_path = _path.join(src_path, 'assets');
@@ -151,10 +148,8 @@ export class ServerGenerator implements IGenerator {
         // create assets folder
         await WriteFile(_path.join(assets_path, '.gitkeep'), Buffer.from(''));
 
-
-
-        console.log(`Updating workspace file...`);
-        await context.workspace.save();
+        console.log(`Saving project file...`);
+        await project.save();
 
 
 

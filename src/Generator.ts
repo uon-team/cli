@@ -1,12 +1,10 @@
 
 import { Type } from '@uon/core';
-import { Workspace } from './Workspace';
-import { GENERATORS } from './types'
+import { GENERATORS, PROJECT_GEN } from './types'
 import { Project } from './Project';
 
 export interface GeneratorContext {
 
-    workspace: Workspace;
     project: Project;
 
     arguments: {
@@ -35,7 +33,27 @@ export interface IGenerator {
     * Get a generator by type
     * @param type 
     */
-export async function GetGenerator(type: string, ws: Workspace): Promise<IGenerator> {
+   export async function GetProjectGenerator(type: string): Promise<IGenerator> {
+
+    if (!PROJECT_GEN[type]) {
+        return null;
+    }
+
+    const gen_type: Type<any> = PROJECT_GEN[type];
+
+    const generator = new gen_type();
+
+    return generator;
+
+}
+
+
+
+/**
+    * Get a generator by type
+    * @param type 
+    */
+export async function GetGenerator(type: string): Promise<IGenerator> {
 
     if (!GENERATORS[type]) {
         return null;

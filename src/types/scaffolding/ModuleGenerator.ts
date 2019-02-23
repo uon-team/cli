@@ -31,7 +31,7 @@ export class ModuleGenerator implements IGenerator {
         }
 
         // find the target path
-        let project_path = _path.resolve(context.workspace.rootPath, context.project.root);
+        let project_path = context.project.rootPath;
         let target_path = _path.join(project_path, 'src/app');
 
         // library doesn't have an app folder
