@@ -10,6 +10,7 @@ import { ModuleGenerator } from './scaffolding/ModuleGenerator';
 import { ServiceGenerator } from './scaffolding/ServiceGenerator';
 import { GuardGenerator } from './scaffolding/GuardGenerator';
 import { OutletGenerator } from './scaffolding/OutletGenerator';
+import { ModelGenerator } from './scaffolding/ModelGenerator';
 
 export const GENERATORS: any = {
 
@@ -21,7 +22,7 @@ export const GENERATORS: any = {
     "outlet": OutletGenerator,
     "guard": GuardGenerator,
     "module": ModuleGenerator,
-    "model": null,
+    "model": ModelGenerator,
 }
 
 export const COMPILERS: any = {
