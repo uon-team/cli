@@ -10,6 +10,7 @@ import { Workspace } from './src/Workspace';
 import { IGenerator, GeneratorContext, GetGenerator } from './src/Generator';
 import { GENERATORS, COMPILERS } from './src/types';
 import { GetCompiler, BuildConfigBase } from './src/Compiler';
+import { Project } from './src/Project';
 
 const VERSION_STRING = `${colors.bold('@uon/cli')} v${PACKAGE.version}`;
 
@@ -88,14 +89,22 @@ program
 
 // build
 program
-    .command('build <project>')
+    .command('build [project]')
     .description('Compile and package a UON project.')
     .option('-W, --watch', 'Rebuild project on file change.')
     .option('-c, --configuration <type>', 'Specify build configuration defined in uon.json')
     .action(async (name: string, options: any) => {
 
         let ws = await Workspace.FindWorkspace();
-        let project = ws.getProjectByName(name);
+
+        let project: Project;
+        if(name) {
+            project = ws.getProjectByName(name);
+        }
+        else {
+            project = ws.getProjectByPath(process.cwd());
+        }
+        
 
         if (!project) {
             console.log(`No project with name "${colors.bold(name)}" found within workspace.`);
