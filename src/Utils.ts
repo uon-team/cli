@@ -131,6 +131,7 @@ export async function CreateTSConfig(path: string) {
 
     const str = `{
     "compilerOptions": {
+        "baseUrl": "./",
         "moduleResolution": "node",
         "module": "commonjs",
         "target": "es2015",
