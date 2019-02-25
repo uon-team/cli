@@ -74,7 +74,6 @@ export class WebAppGenerator implements IGenerator {
             entry: 'src/main.ts',
             options: {
                 outputPath: `dist/${project_name}`,
-                filename: `${project_name}-bundle.js`,
                 index: "src/index.html",
                 styles: [
                     "src/styles.scss"
