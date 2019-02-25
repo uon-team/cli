@@ -1,5 +1,4 @@
 import { Project } from "./Project";
-import { Workspace } from "./Workspace";
 import { COMPILERS } from "./types";
 import { Type } from "@uon/core";
 
@@ -60,7 +59,7 @@ export interface ICompiler<T extends BuildConfigBase> {
     * Get a generator by type
     * @param type 
     */
-export async function GetCompiler(type: string, ws: Workspace): Promise<ICompiler<any>> {
+export async function GetCompiler(type: string): Promise<ICompiler<any>> {
 
     if (!COMPILERS[type]) {
         return null;

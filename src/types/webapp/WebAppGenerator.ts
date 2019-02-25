@@ -38,17 +38,6 @@ export class WebAppGenerator implements IGenerator {
 
     async checkPrerequisites(context: GeneratorContext): Promise<boolean> {
 
-        // check if a project of the same name exists
-        let ws_projects = context.workspace.projects
-            .filter((p) => {
-                return p.name === context.arguments.name;
-            });
-
-        if (ws_projects.length > 0) {
-            throw new Error(`Project with name "${context.arguments.name}" already exist in workspace.`);
-        }
-
-
         return true;
     }
 
@@ -97,11 +86,11 @@ export class WebAppGenerator implements IGenerator {
             }
         });
 
-        context.workspace.projects.push(project);
+        project.rootPath = _path.join(process.cwd(), context.arguments.name);
 
 
         // create project folders
-        const project_path = _path.join(context.workspace.rootPath, project.root);
+        const project_path = project.rootPath;
         const src_path = _path.join(project_path, 'src');
         const app_path = _path.join(src_path, 'app');
         const assets_path = _path.join(src_path, 'assets');
@@ -167,8 +156,8 @@ export class WebAppGenerator implements IGenerator {
         // create index.html
         await CreateIndexHTML(src_path, project_name);
 
-        console.log(`Updating workspace file...`);
-        await context.workspace.save();
+        console.log(`Saving project file...`);
+        await project.save();
 
 
 

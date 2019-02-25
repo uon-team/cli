@@ -12,11 +12,15 @@ import { GuardGenerator } from './scaffolding/GuardGenerator';
 import { OutletGenerator } from './scaffolding/OutletGenerator';
 import { ModelGenerator } from './scaffolding/ModelGenerator';
 
-export const GENERATORS: any = {
+
+export const PROJECT_GEN: any = {
 
     "server":  ServerGenerator,
     "webapp": WebAppGenerator,
     "library": LibraryGenerator,
+};
+
+export const GENERATORS: any = {
 
     "service": ServiceGenerator,
     "outlet": OutletGenerator,
