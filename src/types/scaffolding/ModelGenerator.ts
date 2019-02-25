@@ -54,6 +54,7 @@ export class ModelGenerator implements IGenerator {
         await CreateModelTs(opts.targetPath, model_name);
 
         console.log(`Done!`);
+        
     }
 
 
@@ -74,6 +75,6 @@ export class ${ucc_name} {
 }
 `;
 
-    return WriteFile(_path.join(modulePath, `${name}.ts`), Buffer.from(str));
+    return WriteFile(_path.join(modulePath, `${name}.model.ts`), Buffer.from(str));
 
 }
