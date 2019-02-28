@@ -127,7 +127,9 @@ export async function CreateGitIgnore(path: string) {
 
 }
 
-export async function CreateTSConfig(path: string) {
+export async function CreateTSConfig(path: string, extraLibs: string[] = []) {
+
+    const libs = ["es2015"].concat(extraLibs);
 
     const str = `{
     "compilerOptions": {
@@ -140,9 +142,9 @@ export async function CreateTSConfig(path: string) {
         "declaration": true,
         "outDir": "dist/",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "lib":  ${JSON.stringify(libs)} 
     },
-    "lib": [ "es2015" ],
     "include": [
         "src/**/*"
     ],

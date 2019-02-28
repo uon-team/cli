@@ -17,6 +17,8 @@ export const PROJECT_GEN: any = {
 
     "server":  ServerGenerator,
     "webapp": WebAppGenerator,
+    "webworker": null,
+    "serviceworker": null,
     "library": LibraryGenerator,
 };
 
@@ -33,5 +35,7 @@ export const COMPILERS: any = {
 
     "server":  ServerCompiler,
     "webapp": WebAppCompiler,
+    "webworker": null,
+    "serviceworker": null,
     "library": LibraryCompiler,
 }

@@ -133,7 +133,7 @@ export class WebAppGenerator implements IGenerator {
         //console.log(cmd_result);
 
         // create tsconfig.json
-        await CreateTSConfig(project_path);
+        await CreateTSConfig(project_path, ["dom"]);
 
         // create main.ts
         await CreateMainTs(src_path);
