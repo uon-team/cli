@@ -71,16 +71,54 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
         let pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
         let pkg = JSON.parse(pkg_buffer.toString());
 
-        console.log(`\t Copying package.json to dist folder ...`);
+
+        // remap main to local target dir
+        pkg.main = _path.basename(config.entry, '.ts') + '.js';
+
+
         console.log(`\t Removing scripts from package.json`);
 
         // remove scripts
         delete pkg.scripts;
 
+        console.log(`\t Copying package.json to dist folder ...`);
+
         await WriteFile(_path.join(config.outputPath, 'package.json'),
             Buffer.from(JSON.stringify(pkg, null, 2)));
 
-        console.log(`Done!`);
+
+        // copy LICENCE and README.md
+
+        try {
+            let licence_buffer = await ReadFile(_path.join(config.projectPath, 'LICENSE'));
+        
+            console.log(`\t Copying LICENSE to dist folder ...`);
+            await WriteFile(_path.join(config.outputPath, 'LICENSE'), licence_buffer);
+        }
+        catch(ex) {
+
+        }
+
+        try {
+            let readme_buffer = await ReadFile(_path.join(config.projectPath, 'README.md'));
+        
+            console.log(`\t Copying README.md to dist folder ...`);
+            await WriteFile(_path.join(config.outputPath, 'README.md'), readme_buffer);
+        }
+        catch(ex) {
+
+        }
+
+        // copy .gitignore
+        try {
+            let gi_buffer = await ReadFile(_path.join(config.projectPath, '.gitignore'));
+    
+            await WriteFile(_path.join(config.outputPath, '.gitignore'), gi_buffer);
+        }
+        catch(ex) {
+
+        }
+
 
     }
 }
