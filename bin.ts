@@ -137,6 +137,7 @@ program
     .description('Compile and package a UON project.')
     .option('-W, --watch', 'Rebuild project on file change.')
     .option('-c, --configuration <type>', 'Specify build configuration defined in uon.json')
+    .option('--prod', 'Shortcut to "--configuration production"')
     .action(async (options: any) => {
 
         let project = await Project.FindProject();
@@ -147,6 +148,10 @@ program
         }
 
         let build_options: BuildConfigBase = Object.assign({}, project.options);
+
+        if(options.prod) {
+            options.configuration = "production"
+        }
 
         if (options.configuration) {
 
