@@ -11,13 +11,15 @@ import { ServiceGenerator } from './scaffolding/ServiceGenerator';
 import { GuardGenerator } from './scaffolding/GuardGenerator';
 import { OutletGenerator } from './scaffolding/OutletGenerator';
 import { ModelGenerator } from './scaffolding/ModelGenerator';
+import { WebWorkerGenerator } from './webworker/WebWorkerGenerator';
+import { WebWorkerCompiler } from './webworker/WebWorkerCompiler';
 
 
 export const PROJECT_GEN: any = {
 
     "server":  ServerGenerator,
     "webapp": WebAppGenerator,
-    "webworker": null,
+    "webworker": WebWorkerGenerator,
     "serviceworker": null,
     "library": LibraryGenerator,
 };
@@ -35,7 +37,7 @@ export const COMPILERS: any = {
 
     "server":  ServerCompiler,
     "webapp": WebAppCompiler,
-    "webworker": null,
+    "webworker": WebWorkerCompiler,
     "serviceworker": null,
     "library": LibraryCompiler,
 }

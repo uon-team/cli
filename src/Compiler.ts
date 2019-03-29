@@ -86,24 +86,29 @@ export function GetWebpackConfig(config: BuildConfigBase) {
     });
 
 
-    // format assets to be copied as is
-    const copies = config.assets.map((a) => {
-        let res: any = {
-            from: _path.resolve(config.projectPath, a)
-        };
-
-        if (fs.statSync(_path.resolve(config.projectPath, a)).isDirectory()) {
-            res.to = _path.join(config.outputPath, _path.basename(a));
-        }
-
-        return res;
-    });
-
     // define minifiers
     const minimizers: any[] = [];
-    const plugins: any[] = [
-        new CopyWebpackPlugin(copies, {})
-    ];
+    const plugins: any[] = [];
+
+    if (config.assets) {
+
+        // format assets to be copied as is
+        const copies = config.assets.map((a) => {
+            let res: any = {
+                from: _path.resolve(config.projectPath, a)
+            };
+
+            if (fs.statSync(_path.resolve(config.projectPath, a)).isDirectory()) {
+                res.to = _path.join(config.outputPath, _path.basename(a));
+            }
+
+            return res;
+        });
+
+        plugins.push(new CopyWebpackPlugin(copies, {}))
+
+
+    }
 
 
     if (is_prod) {
