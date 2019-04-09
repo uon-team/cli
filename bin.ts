@@ -44,8 +44,8 @@ program
         };
 
 
-         // check pre-requisites
-         try {
+        // check pre-requisites
+        try {
             await generator.checkPrerequisites(context);
         }
         catch (err) {
@@ -149,7 +149,7 @@ program
 
         let build_options: BuildConfigBase = Object.assign({}, project.options);
 
-        if(options.prod) {
+        if (options.prod) {
             options.configuration = "production"
         }
 
@@ -178,7 +178,10 @@ program
         const project_path = project.rootPath;
 
         build_options.projectPath = project_path;
-        build_options.entry = _path.resolve(project_path, project.entry);
+        build_options.entry = _path.resolve(project_path,
+            build_options.entry
+                ? build_options.entry
+                : project.entry);
         build_options.outputPath = output_path;
         build_options.replacements = (build_options.replacements || []).map((r) => {
             return {

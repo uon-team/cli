@@ -23,6 +23,12 @@ const QUESTIONS = [
         message: 'Generate static asset router outlet?',
         default: false
     },
+    {
+        type: 'confirm',
+        name: 'useWebSocket',
+        message: 'Use @uon/websocket package?',
+        default: false
+    },
 ]
 
 export class ServerGenerator implements IGenerator {
@@ -96,9 +102,13 @@ export class ServerGenerator implements IGenerator {
         EnsureDirectoryExistence(src_path);
 
         const deps = {
-            '@uon/core': '^0.4.0',
-            '@uon/server': '^0.4.0',
-            '@uon/router': '^0.4.0'
+            '@uon/core': '^0.9.0',
+            '@uon/http': '^0.9.0',
+            '@uon/router': '^0.9.0'
+        }
+
+        if(context.configuration.useWebSocket) {
+            (<any>deps)['@uon/websocket'] = '^0.9.0';
         }
 
         const dev_deps = {
