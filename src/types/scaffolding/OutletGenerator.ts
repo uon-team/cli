@@ -82,11 +82,11 @@ function CreateOutletTs(modulePath: string, name: string, config: OutletConfig) 
 `
 
     if(config.addHttp) {
-        extra_import += `import { HttpRoute, HttpResponse, HttpRequest } from '@uon/server';`;
+        extra_import += `import { HttpRoute, OutgoingResponse, IncomingRequest } from '@uon/http';`;
         ctor = `
     constructor(private route: ActivatedRoute,
-        private response: HttpResponse,
-        private request: HttpRequest) {}    
+        private response: OutgoingResponse,
+        private request: IncomingRequest) {}    
         
         `
     }

@@ -104,11 +104,8 @@ export class ServerGenerator implements IGenerator {
         const deps = {
             '@uon/core': '^0.9.0',
             '@uon/http': '^0.9.0',
-            '@uon/router': '^0.9.0'
-        }
-
-        if(context.configuration.useWebSocket) {
-            (<any>deps)['@uon/websocket'] = '^0.9.0';
+            '@uon/router': '^0.9.0',
+            ...context.configuration.useWebSocket && {'@uon/websocket' : '^0.9.0' }
         }
 
         const dev_deps = {
@@ -174,7 +171,7 @@ async function CreateMainAppModule(appPath: string, config: ServerConfig) {
 
     const main_module = `
 import { Module } from '@uon/core';
-import { HttpModule, HTTP_ROUTER } from '@uon/server';
+import { HttpModule, HTTP_ROUTER } from '@uon/http';
 import { RouterModule } from '@uon/router'; 
 import { routes } from './app.routes';
 
@@ -205,12 +202,12 @@ export class AppModule {}
 
         let asset_outlet = `
 import { RouterOutlet, ActivatedRoute} from '@uon/router';
-import { HttpRoute, HttpResponse, HttpCache } from '@uon/server';        
+import { HttpRoute, OutgoingResponse, HttpCache } from '@uon/http';        
 
 @RouterOutlet()
 export class StaticAssetOutlet {
 
-    constructor(private response: HttpResponse, 
+    constructor(private response: OutgoingResponse, 
         private route: ActivatedRoute) {}
 
 
