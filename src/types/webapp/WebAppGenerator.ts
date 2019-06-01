@@ -100,7 +100,7 @@ export class WebAppGenerator implements IGenerator {
         EnsureDirectoryExistence(src_path);
 
         const deps = {
-            '@uon/core': '^0.4.0',
+            '@uon/core': '^0.9.0',
         }
 
         const dev_deps = {

@@ -34,6 +34,63 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
 
         console.log(`Building webapp project...`);
 
+        // get default webpack config
+        const webpack_config = this.configureWebpack(config);
+
+        // create a webpack compiler
+        const compiler: webpack.Compiler = webpack(webpack_config);
+
+        // run it
+        compiler.run((err, stats) => {
+
+            if (err) {
+                console.error(err);
+            }
+
+            console.log(stats.toString({
+                chunks: false,  // Makes the build much quieter
+                colors: true,    // Shows colors in the console
+                chunkOrigins: false,
+                modules: false,
+                children: false
+            }));
+        });
+    }
+
+    async watch(config: WebAppBuildConfig, cb?: () => void) {
+
+        // get default webpack config
+        const webpack_config = this.configureWebpack(config);
+
+        // create a webpack compiler
+        const compiler: webpack.Compiler = webpack(webpack_config);
+
+
+        let result = compiler.watch({}, (err, stats) => {
+
+            if (err) {
+                console.error(err);
+            }
+
+            console.log(stats.toString({
+                chunks: false,  // Makes the build much quieter
+                colors: true,    // Shows colors in the console
+                chunkOrigins: false,
+                modules: false,
+                children: false
+            }));
+
+            cb && cb();
+        });
+
+        return result;
+
+
+    }
+
+    private configureWebpack(config: WebAppBuildConfig) {
+
+
         const is_prod = config.optimizations && config.optimizations.prod;
 
         // get default webpack config
@@ -86,23 +143,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
         webpack_config.entry = (webpack_config.entry as any).concat(extra_entries);
 
 
-        // create a webpack compiler
-        const compiler: webpack.Compiler = webpack(webpack_config);
+        return webpack_config;
 
-        // run it
-        compiler.run((err, stats) => {
-
-            if (err) {
-                console.error(err);
-            }
-
-            console.log(stats.toString({
-                chunks: false,  // Makes the build much quieter
-                colors: true,    // Shows colors in the console
-                chunkOrigins: false,
-                modules: false,
-                children: false
-            }));
-        });
     }
 }
