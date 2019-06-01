@@ -264,12 +264,9 @@ program
 
         let server = http.createServer((req, res) => {
             const uri = url.parse(req.url);
-            console.log(uri);
-
             const pathname = uri.pathname === '/' ? 'index.html' : uri.pathname;
             const p = _path.join(output_path, pathname);
 
-            console.log(p)
             try {
 
                 let rs = fs.createReadStream(p);
@@ -285,8 +282,6 @@ program
                
             }
             catch(err) {
-
-                console.log(err);
 
                 res.statusCode = 404;
                 res.end();
