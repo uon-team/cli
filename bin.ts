@@ -297,7 +297,7 @@ program
 
 
         const watch = await compiler.watch(build_options as WebAppBuildConfig, () => {
-            console.log('cool');
+           
         });
 
 
