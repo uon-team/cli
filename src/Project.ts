@@ -47,6 +47,7 @@ export class Project {
 
     toJSON() {
         return {
+            $schema: "https://uon.io/schemas/uon.json",
             name: this.name,
             projectType: this.projectType,
             entry: this.entry,

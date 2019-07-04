@@ -42,9 +42,8 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
 
         console.log(`\t Transpiling typescript to ${ts_config.compilerOptions.target}...`);
         let program = ts.createProgram([config.entry], real_config.options);
-       
         let sources =  program.getSourceFiles();
-       
+        //sources[0].update()
 
         // emit js code
         let emit_result = program.emit();

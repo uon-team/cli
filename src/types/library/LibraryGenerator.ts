@@ -22,17 +22,17 @@ const QUESTIONS = [
         name: 'packages',
         choices: [
             {
-                name: '@uon/core ^0.4.0',
+                name: '@uon/core ^0.9.0',
                 checked: true
             },
             {
-                name: '@uon/model ^0.4.0',
+                name: '@uon/model ^0.9.0',
             },
             {
-                name: '@uon/math ^0.4.0',
+                name: '@uon/math ^0.9.0',
             },
             {
-                name: '@uon/geom ^0.4.0',
+                name: '@uon/geom ^0.9.0',
             }
         ]
     },
