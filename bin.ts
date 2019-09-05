@@ -9,11 +9,15 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as url from 'url';
 
+import { lookup } from 'mime-types';
+
 import { IGenerator, GeneratorContext, GetGenerator, GetProjectGenerator } from './src/Generator';
 import { GENERATORS, COMPILERS, PROJECT_GEN } from './src/types';
 import { GetCompiler, BuildConfigBase } from './src/Compiler';
 import { Project } from './src/Project';
 import { WebAppCompiler, WebAppBuildConfig } from './src/types/webapp/WebAppCompiler';
+//import { Socket } from 'net';
+//import { WebSocket } from '@uon/websocket';
 
 const VERSION_STRING = `${colors.bold('@uon/cli')} v${PACKAGE.version}`;
 
@@ -205,7 +209,8 @@ program
 program
     .command('serve')
     .description('Starts a local server and watches the source of a webapp project.')
-    .option('-W, --watch', 'Rebuild project on file change.')
+    .option('-H, --host <host>', 'Set the host for the server, defaults to 127.0.0.1')
+    .option('-P, --port <port>', 'Set the port for the server, defaults to 8080')
     .option('-c, --configuration <type>', 'Specify build configuration defined in uon.json')
     .option('--prod', 'Shortcut to "--configuration production"')
     .action(async (options: any) => {
@@ -277,31 +282,46 @@ program
                 });
 
                 rs.on('open', () => {
+
+                    res.setHeader('Content-Type', lookup(pathname) || 'text/plain')
                     rs.pipe(res);
                 });
-               
+
             }
-            catch(err) {
+            catch (err) {
 
                 res.statusCode = 404;
                 res.end();
             }
 
+
+
+        });
+
+        const port = parseInt(options.port) || 8080;
+        const host = options.host || '127.0.0.1';
+
+        console.log(options);
+
+        server.listen(port, host, undefined, () => {
+            console.log(`listening on ${host}:${port}`);
+        });
+
+      /*  const websockets: WebSocket[] = [];
+
+        server.on('upgrade', (req: http.IncomingMessage, socket: Socket, head: Buffer) => {
+
             
 
         });
-
-        server.listen(8080, '127.0.0.1', undefined, () => {
-            console.log('listening');
-        });
-
+*/
 
         const watch = await compiler.watch(build_options as WebAppBuildConfig, () => {
-           
+
         });
 
 
-    
+
 
 
 
