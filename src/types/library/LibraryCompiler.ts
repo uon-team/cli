@@ -49,11 +49,11 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
         let emit_result = program.emit();
 
 
-        let all_diagnostics = ts
-            .getPreEmitDiagnostics(program)
+        let all_diagnostics = (ts
+            .getPreEmitDiagnostics(program) as any)
             .concat(emit_result.diagnostics);
 
-        all_diagnostics.forEach(diagnostic => {
+        all_diagnostics.forEach((diagnostic: any) => {
             if (diagnostic.file) {
                 let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(
                     diagnostic.start!
@@ -80,6 +80,10 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
         // remap main to local target dir
         pkg.main = _path.basename(config.entry, '.ts') + '.js';
 
+        // remap types
+        if(pkg.types) {
+            pkg.types = _path.basename(config.entry, '.ts') + '.d.ts';
+        }
 
         console.log(`\t Removing scripts from package.json`);
 
