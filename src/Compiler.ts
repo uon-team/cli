@@ -24,7 +24,7 @@ export const SASS_LOADER_PATH = _path.join(
 export const CSS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
     'node_modules/css-loader/dist/index.js'
-);
+) + '?-url';
 
 export interface BuildReplacement {
     replace: string;
