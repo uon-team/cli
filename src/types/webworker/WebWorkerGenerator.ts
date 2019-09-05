@@ -87,8 +87,8 @@ export class WebWorkerGenerator implements IGenerator {
         EnsureDirectoryExistence(src_path);
 
         const deps = {
-            '@uon/core': '^0.4.0',
-            '@uon/router': '^0.4.0',
+            '@uon/core': '^0.9.0',
+            '@uon/router': '^0.9.0',
         }
 
         const dev_deps = {
