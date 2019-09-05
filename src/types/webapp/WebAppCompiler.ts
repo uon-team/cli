@@ -26,7 +26,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
 
     async configure(config: WebAppBuildConfig): Promise<void> {
 
-        config.target = 'web';
+        config.target = config.target || 'web';
 
     }
 
@@ -41,7 +41,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
         const compiler: webpack.Compiler = webpack(webpack_config);
 
         // run it
-        compiler.run((err, stats) => {
+        compiler.run((err: any, stats: any) => {
 
             if (err) {
                 console.error(err);
@@ -66,7 +66,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
         const compiler: webpack.Compiler = webpack(webpack_config);
 
 
-        let result = compiler.watch({}, (err, stats) => {
+        let result = compiler.watch({}, (err: any, stats: any) => {
 
             if (err) {
                 console.error(err);
