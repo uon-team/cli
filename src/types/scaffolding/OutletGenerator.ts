@@ -6,7 +6,8 @@ import { IGenerator, GeneratorContext } from '../../Generator';
 import { prompt } from 'inquirer';
 import { Project } from '../../Project';
 import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile, FindModuleContext } from '../../Utils';
-import { StringUtils } from '@uon/core';
+import { CamelCase } from '@uon/string-utils';
+
 
 
 export interface OutletConfig {
@@ -72,9 +73,7 @@ export class OutletGenerator implements IGenerator {
 
 function CreateOutletTs(modulePath: string, name: string, config: OutletConfig) {
 
-    let ucc_name = StringUtils.camelCase(name);
-    ucc_name = ucc_name[0].toUpperCase() + ucc_name.substring(1);
-
+    let ucc_name = CamelCase(name, true);
 
     let extra_import: string = '';
     let ctor = `

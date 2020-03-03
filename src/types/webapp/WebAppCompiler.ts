@@ -2,6 +2,9 @@ import { ICompiler, BuildConfigBase, GetWebpackConfig, SASS_LOADER_PATH, CSS_LOA
 
 import * as webpack from 'webpack';
 import * as _path from 'path';
+import { ReadFile } from "../../Utils";
+import { ViewCompilerContext } from "../../view-compiler/ViewCompilerContext";
+import { Project } from "../../Project";
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -20,13 +23,28 @@ export interface WebAppBuildConfig extends BuildConfigBase {
 export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
 
 
-    constructor() {
+    constructor(private project: Project) {
 
     }
 
     async configure(config: WebAppBuildConfig): Promise<void> {
 
         config.target = config.target || 'web';
+
+        const pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
+        const pkg = JSON.parse(pkg_buffer.toString());
+
+        const deps = Object.keys(pkg.dependencies || pkg);
+
+        if(deps.indexOf('@uon/view') > -1) {
+            console.log('Using @uon/view');
+
+            const vcc = new ViewCompilerContext(this.project, config);
+            await vcc.init();
+
+
+            config.tsTransformers = [vcc.getBeforeTransformer()];
+        }
 
     }
 

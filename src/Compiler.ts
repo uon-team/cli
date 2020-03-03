@@ -6,10 +6,12 @@ import * as webpack from 'webpack';
 import * as _path from 'path';
 import * as fs from 'fs';
 
+import * as ts from 'typescript';
+import { ReadFile } from "./Utils";
+
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-
 
 export const TS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
@@ -18,13 +20,18 @@ export const TS_LOADER_PATH = _path.join(
 
 export const SASS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
-    'node_modules/sass-loader/lib/loader.js'
+    'node_modules/sass-loader/dist/index.js'
 );
 
 export const CSS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
     'node_modules/css-loader/dist/index.js'
 ) + '?-url';
+
+export const JSON_LOADER_PATH = _path.join(
+    _path.resolve(__dirname, '../..'),
+    'node_modules/json-loader/index.js'
+);
 
 export interface BuildReplacement {
     replace: string;
@@ -45,6 +52,8 @@ export interface BuildConfigBase {
 
     optimizations: any;
 
+    tsTransformers?: any[];
+
 
 }
 
@@ -59,17 +68,34 @@ export interface ICompiler<T extends BuildConfigBase> {
     * Get a generator by type
     * @param type 
     */
-export async function GetCompiler(type: string): Promise<ICompiler<any>> {
+export async function GetCompiler(project: Project): Promise<ICompiler<any>> {
 
+    const type = project.projectType;
     if (!COMPILERS[type]) {
         return null;
     }
 
     const c_type: Type<any> = COMPILERS[type];
-
-    const c = new c_type();
-
+    const c = new c_type(project);
     return c;
+}
+
+export async function CreateTsProgram(config: BuildConfigBase) {
+
+    // load tsconfig
+    let ts_config_buffer = await ReadFile(_path.join(config.projectPath, 'tsconfig.json'))
+    let ts_config = JSON.parse(ts_config_buffer.toString());
+
+    // get a real ts config object
+    let real_config = ts.convertCompilerOptionsFromJson(ts_config.compilerOptions, config.projectPath);
+
+    // set the proper output dir
+    real_config.options.outDir = config.outputPath;
+   
+
+    //ts.createCompilerHost(real_config);
+
+    return ts.createProgram([config.entry], real_config.options);
 
 }
 
@@ -118,12 +144,14 @@ export function GetWebpackConfig(config: BuildConfigBase) {
             terserOptions: {
                 mangle: true,
                 keep_fnames: false,
+                output: { comments: false}
 
             }
         }
 
         minimizers.push(new TerserPlugin(terser_options));
     }
+
 
 
     const webpack_config: webpack.Configuration = {
@@ -133,6 +161,9 @@ export function GetWebpackConfig(config: BuildConfigBase) {
         output: {
             path: config.outputPath,
             filename: config.filename
+        },
+        node: {
+            process: false
         },
         resolve: {
             // Add `.ts` and `.tsx` as a resolvable extension.
@@ -146,10 +177,13 @@ export function GetWebpackConfig(config: BuildConfigBase) {
             modules: [_path.join(config.projectPath, "node_modules")]
 
         },
+
         optimization: {
             minimizer: minimizers
         },
+
         plugins: plugins,
+
         module: {
             rules: [
                 // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
@@ -159,7 +193,11 @@ export function GetWebpackConfig(config: BuildConfigBase) {
                         {
                             loader: TS_LOADER_PATH,
                             options: {
-                                transpileOnly: true
+                                transpileOnly: true,
+                                getCustomTransformers: (program: ts.Program) => ({
+                                    before: [...(config.tsTransformers || [])],
+                                    afterDeclarations: [...(config.tsTransformers || [])]
+                                })
                             }
                         }
                     ]

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as _path from 'path';
 import * as ChildProcess from 'child_process';
 
-
+import * as colors from 'colors';
 
 export function ReadFile(path: string) {
 
@@ -28,6 +28,7 @@ export function WriteFile(path: string, content: Buffer) {
 
     return new Promise<void>((resolve, reject) => {
 
+        console.log(colors.green('CREATE'), _path.basename(path))
         fs.writeFile(path, content, (err) => {
 
             if (err) {
@@ -201,11 +202,23 @@ export function FindModuleContext(cwd: string, furthest: string): { path: string
     return FindModuleContext(parent_dir, furthest);
 
 
+}
 
+export function FindPackageJsonFilePath(path: string): string {
 
+    const pkg_filepath = _path.join(path, 'package.json');
 
+    if (!fs.existsSync(pkg_filepath)) {
 
+        let parent_dir = _path.dirname(path);
+        if (parent_dir === "/") {
+            return null;
+        }
 
+        return FindPackageJsonFilePath(parent_dir);
+    }
+
+    return pkg_filepath;
 }
 
 

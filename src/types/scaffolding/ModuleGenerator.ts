@@ -6,7 +6,7 @@ import { IGenerator, GeneratorContext } from '../../Generator';
 import { prompt } from 'inquirer';
 import { Project } from '../../Project';
 import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../Utils';
-import { StringUtils } from '@uon/core';
+import { CamelCase } from '@uon/string-utils';
 
 
 export interface ModuleConfig {
@@ -72,9 +72,8 @@ export class ModuleGenerator implements IGenerator {
 
 export function CreateModuleTs(modulePath: string, name: string) {
 
-    let ucc_name = StringUtils.camelCase(name);
-    ucc_name = ucc_name[0].toUpperCase() + ucc_name.substring(1);
-
+    let ucc_name = CamelCase(name, true);
+    
     const str = `
 import { Module } from '@uon/core';
 

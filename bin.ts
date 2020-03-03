@@ -174,7 +174,7 @@ program
         }
 
         // create compiler
-        let compiler = await GetCompiler(project.projectType);
+        let compiler = await GetCompiler(project);
 
         if (!compiler) {
             console.log(`No compiler with type ${colors.red(project.projectType)} exists. Type must be one of ${colors.bold(Object.keys(COMPILERS).join(', '))}`)
@@ -246,7 +246,7 @@ program
         }
 
         // create compiler
-        const compiler = await GetCompiler(project.projectType) as WebAppCompiler;
+        const compiler = await GetCompiler(project) as WebAppCompiler;
 
 
         // update paths to absolute
@@ -277,8 +277,15 @@ program
                 let rs = fs.createReadStream(p);
 
                 rs.on('error', () => {
-                    res.statusCode = 404;
-                    res.end();
+
+                    let index = _path.join(output_path, 'index.html');
+                    let rs2 = fs.createReadStream(index);
+
+                    rs2.on('open', () => {
+                        res.setHeader('Content-Type', lookup(index) || 'text/plain')
+                        rs2.pipe(res);
+                    });
+                    
                 });
 
                 rs.on('open', () => {
@@ -290,18 +297,16 @@ program
             }
             catch (err) {
 
+                console.log(err);
+
                 res.statusCode = 404;
                 res.end();
             }
-
-
 
         });
 
         const port = parseInt(options.port) || 8080;
         const host = options.host || '127.0.0.1';
-
-        console.log(options);
 
         server.listen(port, host, undefined, () => {
             console.log(`listening on ${host}:${port}`);
@@ -320,12 +325,6 @@ program
 
         });
 
-
-
-
-
-
-
     });
 
 // error on unknown commands
@@ -336,3 +335,5 @@ program.on('command:*', function () {
 
 // run
 program.parse(process.argv);
+
+

@@ -6,7 +6,8 @@ import { IGenerator, GeneratorContext } from '../../Generator';
 import { prompt } from 'inquirer';
 import { Project } from '../../Project';
 import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile, FindModuleContext } from '../../Utils';
-import { StringUtils } from '@uon/core';
+import { CamelCase } from '@uon/string-utils';
+
 
 
 export interface ModelConfig {
@@ -63,8 +64,7 @@ export class ModelGenerator implements IGenerator {
 
 function CreateModelTs(modulePath: string, name: string) {
 
-    let ucc_name = StringUtils.camelCase(name);
-    ucc_name = ucc_name[0].toUpperCase() + ucc_name.substring(1);
+    let ucc_name = CamelCase(name, true);
 
     const str = `
 import { Model, ID, Member, NumberMember, ArrayMember } from '@uon/model';

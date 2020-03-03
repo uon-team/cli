@@ -26,6 +26,9 @@ const QUESTIONS = [
                 checked: true
             },
             {
+                name: '@uon/view ^0.9.0',
+            },
+            {
                 name: '@uon/model ^0.9.0',
             },
             {

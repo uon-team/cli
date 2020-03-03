@@ -47,6 +47,9 @@ export class WebAppGenerator implements IGenerator {
 
         context.configuration = answers;
 
+
+        
+
     }
 
     async generate(context: GeneratorContext): Promise<void> {
