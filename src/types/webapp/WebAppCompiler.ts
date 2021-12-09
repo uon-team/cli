@@ -9,6 +9,7 @@ import { Project } from "../../Project";
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 
 
@@ -36,7 +37,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
 
         const deps = Object.keys(pkg.dependencies || pkg);
 
-        if(deps.indexOf('@uon/view') > -1) {
+        if (deps.indexOf('@uon/view') > -1) {
             console.log('Using @uon/view');
 
             const vcc = new ViewCompilerContext(this.project, config);
@@ -75,7 +76,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
         });
     }
 
-    async watch(config: WebAppBuildConfig, cb?: () => void) {
+    async watch(config: WebAppBuildConfig, cb?: () => void): Promise<any> {
 
         // get default webpack config
         const webpack_config = this.configureWebpack(config);
@@ -125,11 +126,45 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
         });
         webpack_config.plugins.push(scss_plugin);
 
-        // add html handler
-        let html_plugin = new HtmlWebpackPlugin({
-            template: _path.resolve(config.projectPath, config.index)
-        });
-        webpack_config.plugins.push(html_plugin);
+
+        if (config.index) {
+            // add html handler
+            let html_plugin = new HtmlWebpackPlugin({
+                template: _path.resolve(config.projectPath, config.index)
+            });
+            webpack_config.plugins.push(html_plugin);
+        }
+
+
+        if (config.federation) {
+
+            // add module federation
+            webpack_config.plugins.push(
+                new ModuleFederationPlugin({
+                    name: this.project.name,
+                    filename: config.filename,
+                    library: { type: "commonjs2", name: this.project.name },
+                    //shared: config.federation.shared || [], //["@uon/core", "@uon/view", "@uon/router"],
+                    //exposes: config.federation.exposes
+                })
+            );
+
+            webpack_config.externals = [];
+            if (config.federation.shared) {
+                config.federation.shared.forEach((s) => {
+                    (webpack_config.externals as any).push(
+                        function (context: any, request: any, callback: any) {
+                            if (new RegExp(`^${s}$`).test(request)) {
+                                return callback(null, 'commonjs ' + request);
+                            }
+                            callback();
+                        }
+                    );
+                })
+            }
+        }
+
+
 
         // add css loading rules
         webpack_config.module.rules.push({
@@ -151,6 +186,7 @@ export class WebAppCompiler implements ICompiler<WebAppBuildConfig> {
             webpack_config.optimization.minimizer.push(new OptimizeCSSAssetsPlugin({}));
         }
 
+        webpack_config.devtool = config.optimizations && config.optimizations.prod ? false : 'eval-source-map';
 
         // modify entry to include styles and polyfills
         webpack_config.entry = <any>(Array.isArray(webpack_config.entry)

@@ -13,6 +13,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
+
 export const TS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
     'node_modules/ts-loader/index.js'
@@ -37,11 +38,19 @@ export interface BuildReplacement {
     replace: string;
     with: string;
 }
+
+export interface FederationOptions {
+    shared: string[];
+    exposes: { [k: string]: string };
+}
+
 export interface BuildConfigBase {
 
     projectPath: string;
     entry: string;
-    target: 'web' | 'webworker' | 'node' | 'async-node' | 'node-webkit' | 'atom' | 'electron' | 'electron-renderer' | 'electron-main' | ((compiler?: any) => void);
+    target: 'web' | 'webworker' | 'node' | 'async-node' | 'node-webkit' | 'atom' | 'electron' | 'electron-renderer' | 'electron-main';
+
+    exposeAs?: string;
 
     outputPath: string;
     filename: string;
@@ -51,6 +60,9 @@ export interface BuildConfigBase {
     replacements: BuildReplacement[];
 
     optimizations: any;
+
+
+    federation?: FederationOptions;
 
     tsTransformers?: any[];
 
@@ -91,7 +103,7 @@ export async function CreateTsProgram(config: BuildConfigBase) {
 
     // set the proper output dir
     real_config.options.outDir = config.outputPath;
-   
+
 
     //ts.createCompilerHost(real_config);
 
@@ -136,7 +148,6 @@ export function GetWebpackConfig(config: BuildConfigBase) {
 
     }
 
-
     if (is_prod) {
 
         let terser_options = {
@@ -144,7 +155,7 @@ export function GetWebpackConfig(config: BuildConfigBase) {
             terserOptions: {
                 mangle: true,
                 keep_fnames: false,
-                output: { comments: false}
+                output: { comments: false }
 
             }
         }
@@ -158,12 +169,14 @@ export function GetWebpackConfig(config: BuildConfigBase) {
         mode: is_prod ? "production" : "development",
         target: config.target,
         entry: config.entry,
+
         output: {
             path: config.outputPath,
-            filename: config.filename
+            filename: config.filename,
+            ...config.exposeAs && { library: config.exposeAs, libraryTarget: 'commonjs2' },
         },
         node: {
-            process: false
+
         },
         resolve: {
             // Add `.ts` and `.tsx` as a resolvable extension.
