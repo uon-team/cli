@@ -1,37 +1,19 @@
-import { Project } from "./Project";
-import { COMPILERS } from "./types";
-import { Type } from "@uon/core";
+import { Project } from "./project";
+import { COMPILERS } from "./types/";
+import { ReadFile } from "./utils";
 
+import * as ts from 'typescript';
 import * as webpack from 'webpack';
 import * as _path from 'path';
 import * as fs from 'fs';
 
-import * as ts from 'typescript';
-import { ReadFile } from "./Utils";
 
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-
+import * as CopyPlugin from 'copy-webpack-plugin';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
 export const TS_LOADER_PATH = _path.join(
     _path.resolve(__dirname, '../..'),
     'node_modules/ts-loader/index.js'
-);
-
-export const SASS_LOADER_PATH = _path.join(
-    _path.resolve(__dirname, '../..'),
-    'node_modules/sass-loader/dist/index.js'
-);
-
-export const CSS_LOADER_PATH = _path.join(
-    _path.resolve(__dirname, '../..'),
-    'node_modules/css-loader/dist/index.js'
-) + '?-url';
-
-export const JSON_LOADER_PATH = _path.join(
-    _path.resolve(__dirname, '../..'),
-    'node_modules/json-loader/index.js'
 );
 
 export interface BuildReplacement {
@@ -87,7 +69,7 @@ export async function GetCompiler(project: Project): Promise<ICompiler<any>> {
         return null;
     }
 
-    const c_type: Type<any> = COMPILERS[type];
+    const c_type: any = COMPILERS[type];
     const c = new c_type(project);
     return c;
 }
@@ -143,12 +125,16 @@ export function GetWebpackConfig(config: BuildConfigBase) {
             return res;
         });
 
-        plugins.push(new CopyWebpackPlugin(copies, {}))
+        let opts: CopyPlugin.CopyPluginOptions = {
+            patterns: copies
+        };
+
+        plugins.push(new CopyPlugin(opts))
 
 
     }
 
-    if (is_prod) {
+    /*if (is_prod) {
 
         let terser_options = {
             parallel: true,
@@ -161,7 +147,7 @@ export function GetWebpackConfig(config: BuildConfigBase) {
         }
 
         minimizers.push(new TerserPlugin(terser_options));
-    }
+    }*/
 
 
 

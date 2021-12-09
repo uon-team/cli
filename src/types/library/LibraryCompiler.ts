@@ -1,11 +1,11 @@
-import { ICompiler, BuildConfigBase, GetWebpackConfig, SASS_LOADER_PATH, CSS_LOADER_PATH, CreateTsProgram } from "../../Compiler";
+import { ICompiler, BuildConfigBase, GetWebpackConfig, CreateTsProgram } from "../../compiler";
+import { ReadFile, WriteFile } from "../../utils";
+import { Project } from "../../project";
 
 import * as ts from 'typescript';
 import * as _path from 'path';
 import * as fs from 'fs';
-import { ReadFile, WriteFile } from "../../Utils";
-import { ViewCompilerContext } from "../../view-compiler/ViewCompilerContext";
-import { Project } from "../../Project";
+
 
 
 export interface LibraryBuildConfig extends BuildConfigBase {
@@ -28,23 +28,10 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
 
     async configure(config: LibraryBuildConfig): Promise<void> {
 
-        const pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
+       /* const pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
         const pkg = JSON.parse(pkg_buffer.toString());
 
-        const deps = Object.keys(pkg.dependencies || {}).concat(Object.keys(pkg.peerDependencies || {}));
-
-        if (deps.indexOf('@uon/view') > -1 || pkg.name === '@uon/view') {
-
-            console.log('Using @uon/view');
-
-            const vcc = new ViewCompilerContext(this.project, config);
-            await vcc.init();
-
-            let trans = vcc.getBeforeTransformer();
-
-            this.transformers.before.push(trans);
-            this.transformers.afterDeclarations.push(trans);
-        }
+        const deps = Object.keys(pkg.dependencies || {}).concat(Object.keys(pkg.peerDependencies || {}));*/
 
     }
 
@@ -185,6 +172,6 @@ function CopyRecursiveSync(src: string, dest: string) {
                 _path.join(dest, childItemName));
         });
     } else {
-        fs.copyFileSync(src, dest);    // UPDATE FROM:    fs.linkSync(src, dest);
+        fs.copyFileSync(src, dest);
     }
 };

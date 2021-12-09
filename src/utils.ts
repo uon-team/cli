@@ -3,22 +3,15 @@ import * as fs from 'fs';
 import * as _path from 'path';
 import * as ChildProcess from 'child_process';
 
-import * as colors from 'colors';
 
 export function ReadFile(path: string) {
-
     return new Promise<Buffer>((resolve, reject) => {
-
         fs.readFile(path, (err, data) => {
-
             if (err) {
                 return reject(err);
             }
-
             resolve(data);
-
         });
-
     });
 }
 
@@ -27,32 +20,20 @@ export function WriteFile(path: string, content: Buffer) {
     EnsureDirectoryExistence(path);
 
     return new Promise<void>((resolve, reject) => {
-
-        console.log(colors.green('CREATE'), _path.basename(path))
+        console.log('CREATE', _path.basename(path))
         fs.writeFile(path, content, (err) => {
-
             if (err) {
                 return reject(err);
             }
-
             resolve();
-
         });
-
     });
 }
 
 
 export function FileExists(path: string) {
-
     return new Promise<boolean>((resolve, reject) => {
-
-        fs.exists(path, (exists) => {
-
-            resolve(exists);
-
-        });
-
+        resolve(fs.existsSync(path));
     });
 }
 
@@ -130,7 +111,7 @@ export async function CreateGitIgnore(path: string) {
 
 export async function CreateTSConfig(path: string, extraLibs: string[] = []) {
 
-    const libs = ["es2015"].concat(extraLibs);
+    const libs = ["es2017"].concat(extraLibs);
 
     const str = `{
     "compilerOptions": {

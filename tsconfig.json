@@ -2,18 +2,18 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "module": "commonjs",
-    "target": "es2015",
+    "target": "esnext",
     "noImplicitAny": true,
     "sourceMap": true,
     "declaration": true,
     "outDir": "dist/",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true
   },
-  "lib": [ "es2015" ],
+  "lib": [ "esnext" ],
   "include": [
     "bin.ts",
-    "index.ts",
     "src/**/*"
   ],
   "exclude": [

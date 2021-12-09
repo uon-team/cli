@@ -1,9 +1,6 @@
-import { WriteFile, ReadFile } from "./Utils";
+import { WriteFile, ReadFile } from "./utils";
 import * as _path from 'path';
 import * as fs from 'fs';
-
-
-
 
 
 export interface IProjectType {

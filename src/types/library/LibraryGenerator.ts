@@ -1,12 +1,8 @@
 import * as _path from 'path';
 
-import { IGenerator, GeneratorContext } from '../../Generator';
-
-import { prompt } from 'inquirer';
-import { Project } from '../../Project';
-import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../Utils';
-
-
+import { IGenerator, GeneratorContext } from '../../generator';
+import { Project } from '../../project';
+import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../utils';
 
 
 export interface LibraryConfig {
@@ -59,9 +55,9 @@ export class LibraryGenerator implements IGenerator {
 
     async configure(context: GeneratorContext): Promise<void> {
 
-        let answers = await prompt(QUESTIONS);
+       // let answers = await prompt(QUESTIONS);
 
-        context.configuration = answers;
+        context.configuration = {packages: []};
 
     }
 
@@ -102,7 +98,7 @@ export class LibraryGenerator implements IGenerator {
         });
 
         if (opts.includeNodeTypes) {
-            dev_deps['@types/node'] = "^10.11.0";
+            dev_deps['@types/node'] = "^16.11.12";
         }
 
 

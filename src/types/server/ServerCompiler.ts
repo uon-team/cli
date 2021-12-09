@@ -1,6 +1,8 @@
-import { ICompiler, BuildConfigBase, GetWebpackConfig } from "../../Compiler";
+import { ICompiler, BuildConfigBase, GetWebpackConfig } from "../../compiler";
 
-import * as webpack from 'webpack';
+//import { webpack, Compiler } from 'webpack';
+
+import { webpack } from 'webpack';
 import * as _path from 'path';
 
 
@@ -34,9 +36,9 @@ export class ServerCompiler implements ICompiler<ServerBuildConfig> {
         webpack_config.node = {
             __dirname: false
         };
-        
+
         // create a webpack compiler
-        const compiler: webpack.Compiler = webpack(webpack_config);
+        const compiler = webpack(webpack_config);
 
         // run it
         compiler.run((err, stats) => {

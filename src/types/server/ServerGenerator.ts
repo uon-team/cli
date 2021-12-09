@@ -1,13 +1,10 @@
 
 import * as _path from 'path';
 import * as fs from 'fs';
-import * as colors from 'colors/safe';
 
-import { IGenerator, GeneratorContext } from '../../Generator';
-
-import { prompt } from 'inquirer';
-import { Project } from '../../Project';
-import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../Utils';
+import { IGenerator, GeneratorContext } from '../../generator';
+import { Project } from '../../project';
+import { EnsureDirectoryExistence, ExecCommand, WriteFile, CreateGitIgnore, CreateTSConfig, CreateEnvFile } from '../../utils';
 
 export interface ServerConfig {
 
@@ -49,9 +46,9 @@ export class ServerGenerator implements IGenerator {
 
     async configure(context: GeneratorContext): Promise<void> {
 
-        let answers = await prompt(QUESTIONS);
+        //let answers = await prompt(QUESTIONS);
 
-        context.configuration = answers;
+        context.configuration = {}; //answers;
 
     }
 
@@ -60,7 +57,7 @@ export class ServerGenerator implements IGenerator {
         
         let project_name = context.arguments.name;
 
-        console.log(`Generating server project "${colors.bold(project_name)}"...`);
+        console.log(`Generating server project "${project_name}"...`);
 
         // create new project
         let project = new Project({
@@ -102,14 +99,15 @@ export class ServerGenerator implements IGenerator {
         EnsureDirectoryExistence(src_path);
 
         const deps = {
-            '@uon/core': '^0.9.0',
-            '@uon/http': '^0.9.0',
-            '@uon/router': '^0.9.0',
+            '@uon/core': '^0.11.0',
+            '@uon/model': '^0.11.0',
+            '@uon/http': '^0.11.0',
+            '@uon/router': '^0.11.0',
             ...context.configuration.useWebSocket && {'@uon/websocket' : '^0.9.0' }
         }
 
         const dev_deps = {
-            '@types/node': '^10.11.0'
+            '@types/node': '^16.11.12'
         }
 
 
@@ -119,7 +117,7 @@ export class ServerGenerator implements IGenerator {
         let cmd_result = await ExecCommand('npm init -y');
 
         const package_path = _path.join(project_path, 'package.json');
-        let pkg: any = require(package_path);
+        let pkg: any = JSON.parse(fs.readFileSync(package_path).toString());
 
         pkg.dependencies = deps;
         pkg.devDependencies = dev_deps;
