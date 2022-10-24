@@ -118,7 +118,7 @@ export async function CreateTSConfig(path: string, extraLibs: string[] = []) {
         "baseUrl": "./",
         "moduleResolution": "node",
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es2017",
         "noImplicitAny": true,
         "sourceMap": true,
         "declaration": true,

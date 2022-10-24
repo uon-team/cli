@@ -7,6 +7,7 @@ import * as webpack from 'webpack';
 import * as _path from 'path';
 import * as fs from 'fs';
 
+const TerserPlugin = require("terser-webpack-plugin");
 
 import * as CopyPlugin from 'copy-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
@@ -32,7 +33,8 @@ export interface BuildConfigBase {
     entry: string;
     target: 'web' | 'webworker' | 'node' | 'async-node' | 'node-webkit' | 'atom' | 'electron' | 'electron-renderer' | 'electron-main';
 
-    exposeAs?: string;
+    library?: string;
+    libraryTarget?: string;
 
     outputPath: string;
     filename: string;
@@ -98,20 +100,19 @@ export function GetWebpackConfig(config: BuildConfigBase) {
 
     const is_prod = config.optimizations && config.optimizations.prod;
 
-
     // format replacements as aliases
     const aliases: any = {};
-    config.replacements.forEach((r) => {
-        aliases[r.replace] = r.with;
-    });
-
+    if(config.replacements) {
+        config.replacements.forEach((r) => {
+            aliases[r.replace] = r.with;
+        });
+    }
 
     // define minifiers
     const minimizers: any[] = [];
     const plugins: any[] = [];
 
-    if (config.assets) {
-
+    if (config.assets && config.assets.length) {
         // format assets to be copied as is
         const copies = config.assets.map((a) => {
             let res: any = {
@@ -134,7 +135,7 @@ export function GetWebpackConfig(config: BuildConfigBase) {
 
     }
 
-    /*if (is_prod) {
+   /* if (is_prod) {
 
         let terser_options = {
             parallel: true,
@@ -151,15 +152,19 @@ export function GetWebpackConfig(config: BuildConfigBase) {
 
 
 
+
     const webpack_config: webpack.Configuration = {
         mode: is_prod ? "production" : "development",
         target: config.target,
         entry: config.entry,
+       /* experiments: {
+            outputModule: true
+        },*/
 
         output: {
             path: config.outputPath,
             filename: config.filename,
-            ...config.exposeAs && { library: config.exposeAs, libraryTarget: 'commonjs2' },
+            ...config.libraryTarget && { library: config.libraryTarget == 'module' ? undefined : config.library, libraryTarget: config.libraryTarget || 'commonjs2' },
         },
         node: {
 
@@ -192,7 +197,7 @@ export function GetWebpackConfig(config: BuildConfigBase) {
                         {
                             loader: TS_LOADER_PATH,
                             options: {
-                                transpileOnly: true,
+                                transpileOnly: false,
                                 getCustomTransformers: (program: ts.Program) => ({
                                     before: [...(config.tsTransformers || [])],
                                     afterDeclarations: [...(config.tsTransformers || [])]

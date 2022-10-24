@@ -2,6 +2,7 @@ import { ICompiler, BuildConfigBase, GetWebpackConfig, CreateTsProgram } from ".
 import { ReadFile, WriteFile } from "../../utils";
 import { Project } from "../../project";
 
+import { webpack } from 'webpack';
 import * as ts from 'typescript';
 import * as _path from 'path';
 import * as fs from 'fs';
@@ -28,14 +29,41 @@ export class LibraryCompiler implements ICompiler<LibraryBuildConfig> {
 
     async configure(config: LibraryBuildConfig): Promise<void> {
 
-       /* const pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
-        const pkg = JSON.parse(pkg_buffer.toString());
 
-        const deps = Object.keys(pkg.dependencies || {}).concat(Object.keys(pkg.peerDependencies || {}));*/
+
+        /* const pkg_buffer = await ReadFile(_path.join(config.projectPath, 'package.json'));
+         const pkg = JSON.parse(pkg_buffer.toString());
+ 
+         const deps = Object.keys(pkg.dependencies || {}).concat(Object.keys(pkg.peerDependencies || {}));*/
 
     }
 
     async compile(config: LibraryBuildConfig): Promise<void> {
+
+
+        if (config.filename) {
+
+            config.target = 'web';
+
+            const webpack_config = GetWebpackConfig(config);
+            const compiler = webpack(webpack_config);
+            compiler.run((err, stats) => {
+
+                if (err) {
+                    console.error(err);
+                }
+
+                console.log(stats.toString({
+                    chunks: false,  // Makes the build much quieter
+                    colors: true,    // Shows colors in the console
+                    chunkOrigins: false,
+                    modules: false
+                }));
+            });
+
+            return;
+
+        }
 
         // typescript transpile only, no webpack packaging
         console.log(`Building library project...`);
@@ -166,7 +194,7 @@ function CopyRecursiveSync(src: string, dest: string) {
     var stats = exists && fs.statSync(src);
     var isDirectory = exists && stats.isDirectory();
     if (isDirectory) {
-        try { fs.mkdirSync(dest) } catch(e) {};
+        try { fs.mkdirSync(dest) } catch (e) { };
         fs.readdirSync(src).forEach(function (childItemName) {
             CopyRecursiveSync(_path.join(src, childItemName),
                 _path.join(dest, childItemName));

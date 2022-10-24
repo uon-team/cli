@@ -36,6 +36,7 @@ export class ServerCompiler implements ICompiler<ServerBuildConfig> {
         webpack_config.node = {
             __dirname: false
         };
+        
 
         // create a webpack compiler
         const compiler = webpack(webpack_config);
@@ -54,5 +55,45 @@ export class ServerCompiler implements ICompiler<ServerBuildConfig> {
                 modules: false
             }));
         });
+    }
+
+    async watch(config: ServerBuildConfig, callback: (err: any) => void) {
+
+        const webpack_config = GetWebpackConfig(config);
+
+        // add node specific options
+        webpack_config.node = {
+            __dirname: false
+        };
+
+        /*webpack_config.resolve = {
+            symlinks: true,
+
+        };*/
+
+        // create a webpack compiler
+        const compiler = webpack(webpack_config);
+        compiler.watch({
+            aggregateTimeout: 500,
+            poll: 2000,
+            followSymlinks: true,
+
+        }, (err, stats) => {
+
+            if (err) {
+                console.error(err);
+            }
+
+            /*console.log(stats.toString({
+                chunks: false,  // Makes the build much quieter
+                colors: true,    // Shows colors in the console
+                chunkOrigins: false,
+                modules: false,
+
+            }));*/
+
+            callback(err);
+        })
+
     }
 }
